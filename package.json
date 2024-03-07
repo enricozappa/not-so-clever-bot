@@ -1,0 +1,17 @@
+{
+  "name": "not-so-clever-bot",
+  "version": "1.0.0",
+  "description": "A not so clever Discord bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Enrico Zappalà",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.14.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+}
