@@ -12,4 +12,4 @@ async function execute(interaction) {
   );
 }
 
-export const userCommand = { data, execute };
+export const command = { data, execute };

@@ -8,4 +8,4 @@ async function execute(interaction) {
   await interaction.reply('Pong!');
 }
 
-export const pingCommand = { data, execute };
+export const command = { data, execute };

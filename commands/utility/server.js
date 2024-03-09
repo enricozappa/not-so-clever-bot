@@ -11,4 +11,4 @@ async function execute(interaction) {
   );
 }
 
-export const serverCommand = { data, execute };
+export const command = { data, execute };
