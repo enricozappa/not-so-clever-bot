@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import 'dotenv/config';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const TEST_SERVER_ID = process.env.TEST_SERVER_ID;
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -66,7 +65,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   try {
     await command.execute(interaction);
-    console.log(interaction);
+    console.log(interaction.user);
   } catch (error) {
     console.error(error);
 
