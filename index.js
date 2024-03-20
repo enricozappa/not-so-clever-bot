@@ -1,9 +1,9 @@
-import { Client, Collection, Events, GatewayIntentBits } from 'discord.js';
+import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import { promises as fs } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import ready from './events/ready.js';
-import interactionCreate from './events/interactionCreate.js';
+import readyEvent from './events/ready.js';
+import interactionCreateEvent from './events/interactionCreate.js';
 import 'dotenv/config';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -12,31 +12,34 @@ const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
 
-// Get "commands" folder path
-const foldersPath = join(dirname(fileURLToPath(import.meta.url)), 'commands');
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-(async () => {
-  const folders = await fs.readdir(foldersPath);
+// Get "commands" folder path
+const commandsPath = join(__dirname, 'commands');
+
+async function registerCommands() {
+  const folders = await fs.readdir(commandsPath);
+
   // Get all "commands" subfolders
   for (const folder of folders) {
-    const commandsPath = join(foldersPath, folder);
-    const commandFiles = await fs.readdir(commandsPath);
-    const jsFiles = commandFiles.filter((file) => file.endsWith('.js'));
+    const folderPath = join(commandsPath, folder);
+    const commandFiles = (await fs.readdir(folderPath)).filter((file) =>
+      file.endsWith('.js')
+    );
 
-    for (const file of jsFiles) {
-      const filePath = join(commandsPath, file);
+    for (const file of commandFiles) {
+      const filePath = join(folderPath, file);
 
       try {
-        const module = await import(`file://${filePath}`);
-        const command = module.command;
+        const { command } = await import(`file://${filePath}`);
 
         // Set a new item in the Collection with the key as the command name and the value as the imported module
         if (command && command.data && command.execute) {
           client.commands.set(command.data.name, command);
           console.log(`Added command => ${command.data.name}`);
         } else {
-          console.log(
-            `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+          console.error(
+            `[WARNING] Command at ${filePath} is missing required properties.`
           );
         }
       } catch (error) {
@@ -44,15 +47,20 @@ const foldersPath = join(dirname(fileURLToPath(import.meta.url)), 'commands');
       }
     }
   }
-})();
+}
 
-// When the client is ready, log a message
-client.once(Events.ClientReady, () => ready.execute(client));
+async function registerEvents() {
+  client.once(readyEvent.name, (...args) => readyEvent.execute(...args));
+  client.on(interactionCreateEvent.name, (...args) =>
+    interactionCreateEvent.execute(...args)
+  );
+}
 
-// Log in to Discord using token
-client.login(DISCORD_TOKEN);
+async function main() {
+  await registerCommands();
+  await registerEvents();
 
-// Listen for interaction
-client.on(Events.InteractionCreate, async (interaction) => {
-  await interactionCreate.execute(interaction);
-});
+  client.login(DISCORD_TOKEN);
+}
+
+main().catch(console.error);
