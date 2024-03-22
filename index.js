@@ -10,74 +10,41 @@ const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// FIXME: Group redundancy into a single global register function
 async function registerCommands() {
-  // Get "commands" folder path
-  const foldersPath = join(__dirname, 'commands');
-  const folders = await fs.readdir(foldersPath);
+  // Get commands modules from "commands" folder
+  const modules = await importModules('commands');
 
-  // Get all subfolders
-  for (const folder of folders) {
-    const folderPath = join(foldersPath, folder);
-    const files = (await fs.readdir(folderPath)).filter((file) =>
-      file.endsWith('.js')
-    );
-
-    for (const file of files) {
-      const filePath = join(folderPath, file);
-
-      try {
-        const { command } = await import(`file://${filePath}`);
-
-        // Set a new item in the Collection with the key as the command name and the value as the imported module
-        if (command && command.data && command.execute) {
-          client.commands.set(command.data.name, command);
-          console.log(`Added command => ${command.data.name}`);
-        } else {
-          console.error(
-            `[WARNING] Command at ${filePath} is missing required properties.`
-          );
-        }
-      } catch (error) {
-        console.error(`Error loading the command at ${filePath}`, error);
-      }
+  modules.forEach((command) => {
+    // Set a new item in the Collection with the key as the command name and the value as the imported module
+    if (command && command.data && command.execute) {
+      client.commands.set(command.data.name, command);
+      console.log(`Added command => ${command.data.name}`);
+    } else {
+      console.error(
+        `[WARNING] Command at ${filePath} is missing required properties.`
+      );
     }
-  }
+  });
 }
 
-// FIXME: Group redundancy into a single global register function
 async function registerEvents() {
-  // Get "events" folder path
-  const foldersPath = join(__dirname, 'events');
-  const files = (await fs.readdir(foldersPath)).filter((file) =>
-    file.endsWith('.js')
-  );
+  // Get events modules from "events" folder
+  const modules = await importModules('events');
 
-  for (const file of files) {
-    const filePath = join(foldersPath, file);
-
-    try {
-      const module = await import(`file://${filePath}`);
-      const event = module.event;
-
-      if (event.name && event.execute) {
-        if (event.once) {
-          client.once(event.name, (...args) => event.execute(...args));
-        } else {
-          client.on(event.name, (...args) => event.execute(...args));
-        }
-        console.log(`Added event => ${event.name}`);
+  modules.forEach((event) => {
+    if (event.name && event.execute) {
+      if (event.once) {
+        client.once(event.name, (...args) => event.execute(...args));
       } else {
-        console.error(
-          `[WARNING] Event at ${filePath} is missing required properties.`
-        );
+        client.on(event.name, (...args) => event.execute(...args));
       }
-    } catch (error) {
-      console.error(`Error loading the event at ${filePath}`, error);
+      console.log(`Added event => ${event.name}`);
+    } else {
+      console.error(
+        `[WARNING] Event at ${filePath} is missing required properties.`
+      );
     }
-  }
+  });
 }
 
 async function main() {
@@ -88,3 +55,27 @@ async function main() {
 }
 
 main().catch(console.error);
+
+// TODO: move to an external file
+async function importModules(folderName) {
+  const modules = [];
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+
+  try {
+    const folderPath = join(__dirname, folderName);
+    const files = (await fs.readdir(folderPath)).filter((file) =>
+      file.endsWith('.js')
+    );
+
+    for (const file of files) {
+      const filePath = join(folderPath, file);
+      const module = await import(`file://${filePath}`);
+
+      modules.push(module?.event || module?.command);
+    }
+
+    return modules;
+  } catch (error) {
+    console.error('Error loading files =>', error);
+  }
+}

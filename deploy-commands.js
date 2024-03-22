@@ -10,6 +10,7 @@ const GUILD_ID = process.env.TEST_SERVER_ID;
 const CLIENT_ID = process.env.CLIENT_ID;
 const foldersPath = join(dirname(fileURLToPath(import.meta.url)), 'commands');
 
+// FIXME: Refactor using the new shared function "importModules"
 async function loadCommands() {
   const commands = [];
   const folders = await fs.readdir(foldersPath);
