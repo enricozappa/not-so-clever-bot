@@ -1,7 +1,6 @@
-// events/ready.js
 import { Events } from 'discord.js';
 
-const ready = {
+export const event = {
   name: Events.ClientReady,
   once: true,
 
@@ -9,5 +8,3 @@ const ready = {
     console.log(`Ready! Logged in as ${client.user.tag}`);
   },
 };
-
-export default ready;

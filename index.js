@@ -2,8 +2,6 @@ import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import { promises as fs } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import readyEvent from './events/ready.js';
-import interactionCreateEvent from './events/interactionCreate.js';
 import 'dotenv/config';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -14,20 +12,20 @@ client.commands = new Collection();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Get "commands" folder path
-const commandsPath = join(__dirname, 'commands');
-
+// FIXME: Group redundancy into a single global register function
 async function registerCommands() {
-  const folders = await fs.readdir(commandsPath);
+  // Get "commands" folder path
+  const foldersPath = join(__dirname, 'commands');
+  const folders = await fs.readdir(foldersPath);
 
-  // Get all "commands" subfolders
+  // Get all subfolders
   for (const folder of folders) {
-    const folderPath = join(commandsPath, folder);
-    const commandFiles = (await fs.readdir(folderPath)).filter((file) =>
+    const folderPath = join(foldersPath, folder);
+    const files = (await fs.readdir(folderPath)).filter((file) =>
       file.endsWith('.js')
     );
 
-    for (const file of commandFiles) {
+    for (const file of files) {
       const filePath = join(folderPath, file);
 
       try {
@@ -49,11 +47,37 @@ async function registerCommands() {
   }
 }
 
+// FIXME: Group redundancy into a single global register function
 async function registerEvents() {
-  client.once(readyEvent.name, (...args) => readyEvent.execute(...args));
-  client.on(interactionCreateEvent.name, (...args) =>
-    interactionCreateEvent.execute(...args)
+  // Get "events" folder path
+  const foldersPath = join(__dirname, 'events');
+  const files = (await fs.readdir(foldersPath)).filter((file) =>
+    file.endsWith('.js')
   );
+
+  for (const file of files) {
+    const filePath = join(foldersPath, file);
+
+    try {
+      const module = await import(`file://${filePath}`);
+      const event = module.event;
+
+      if (event.name && event.execute) {
+        if (event.once) {
+          client.once(event.name, (...args) => event.execute(...args));
+        } else {
+          client.on(event.name, (...args) => event.execute(...args));
+        }
+        console.log(`Added event => ${event.name}`);
+      } else {
+        console.error(
+          `[WARNING] Event at ${filePath} is missing required properties.`
+        );
+      }
+    } catch (error) {
+      console.error(`Error loading the event at ${filePath}`, error);
+    }
+  }
 }
 
 async function main() {

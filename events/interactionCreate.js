@@ -1,7 +1,6 @@
-// events/ready.js
 import { Events } from 'discord.js';
 
-const interactionCreate = {
+export const event = {
   name: Events.InteractionCreate,
 
   async execute(interaction) {
@@ -36,5 +35,3 @@ const interactionCreate = {
     }
   },
 };
-
-export default interactionCreate;
