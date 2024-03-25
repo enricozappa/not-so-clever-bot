@@ -1,7 +1,5 @@
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
-import { promises as fs } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import importModules from './utilities/importModules.js';
 import 'dotenv/config';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -55,27 +53,3 @@ async function main() {
 }
 
 main().catch(console.error);
-
-// TODO: move to an external file
-async function importModules(folderName) {
-  const modules = [];
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-
-  try {
-    const folderPath = join(__dirname, folderName);
-    const files = (await fs.readdir(folderPath)).filter((file) =>
-      file.endsWith('.js')
-    );
-
-    for (const file of files) {
-      const filePath = join(folderPath, file);
-      const module = await import(`file://${filePath}`);
-
-      modules.push(module?.event || module?.command);
-    }
-
-    return modules;
-  } catch (error) {
-    console.error('Error loading files =>', error);
-  }
-}
