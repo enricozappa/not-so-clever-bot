@@ -7,6 +7,7 @@ const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
+client.cooldowns = new Collection();
 
 async function registerCommands() {
   // Get commands modules from "commands" folder
