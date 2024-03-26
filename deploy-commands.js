@@ -1,8 +1,7 @@
 import { REST, Routes } from 'discord.js';
-import { promises as fs } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
+import importModules from './utilities/importModules.js';
 import 'dotenv/config';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -10,37 +9,19 @@ const GUILD_ID = process.env.TEST_SERVER_ID;
 const CLIENT_ID = process.env.CLIENT_ID;
 const foldersPath = join(dirname(fileURLToPath(import.meta.url)), 'commands');
 
-// FIXME: Refactor using the new shared function "importModules"
 async function loadCommands() {
   const commands = [];
-  const folders = await fs.readdir(foldersPath);
+  const modules = await importModules('commands');
 
-  // Get all "commands" subfolders
-  for (const folder of folders) {
-    const commandsPath = join(foldersPath, folder);
-    const commandFiles = await fs.readdir(commandsPath);
-    const jsFiles = commandFiles.filter((file) => file.endsWith('.js'));
-
-    for (const file of jsFiles) {
-      const filePath = join(commandsPath, file);
-
-      try {
-        const module = await import(`file://${filePath}`);
-        const command = module.command;
-
-        // Set a new item in the Collection with the key as the command name and the value as the imported module
-        if (command && command.data && command.execute) {
-          commands.push(command.data.toJSON());
-        } else {
-          console.log(
-            `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-          );
-        }
-      } catch (error) {
-        console.error(`Error loading the command at ${filePath}`, error);
-      }
+  modules.forEach((command) => {
+    if (command && command.data && command.execute) {
+      commands.push(command.data.toJSON());
+    } else {
+      console.error(
+        `[WARNING] Command at ${filePath} is missing required properties.`
+      );
     }
-  }
+  });
 
   return commands;
 }
