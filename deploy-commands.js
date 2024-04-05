@@ -38,7 +38,7 @@ async function deployCommands() {
 
     // The put method is used to fully refresh all commands in the guild with the current set
     const data = await rest.put(
-      Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), // use "applicationCommands" to register global commands
+      Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
       { body: commands }
     );
 

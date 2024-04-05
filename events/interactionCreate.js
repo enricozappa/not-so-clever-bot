@@ -53,7 +53,7 @@ export const event = {
 
     try {
       await command.execute(interaction);
-      console.log(interaction.user);
+      // console.log(interaction.user);
     } catch (error) {
       console.error(error);
 
