@@ -22,6 +22,6 @@ To run the project, you'll need to:
    - `SERVER_ID=yourserverid`
 4. When everything is set, run `node index.js` to start the bot
 
-Additionally, it's essential to follow the guide at ![Discord Developer Portal](https://discord.com/developers) to create your bot application and associate it with your Discord channel. Here, you can generate your tokens and IDs to be inserted into the `.env` file.
+Additionally, it's essential to follow the guide at [Discord Developers Portal](https://discord.com/developers) to create your bot application and associate it with your Discord channel. Here, you can generate your tokens and IDs to be inserted into the `.env` file.
 
-For developing the application, I followed this excellent documentation: ![Discord.js Guide](https://discord.js.org/docs/packages/discord.js/main). The only issue with this documentation is that the code examples are in ES5, so I had to adapt some approaches to use more modern methods.
+For developing the application, I followed this excellent documentation: [Discord.js Docs](https://discord.js.org/docs/packages/discord.js/main). The only issue with this documentation is that the code examples are in ES5, so I had to adapt some approaches to use more modern methods.
