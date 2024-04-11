@@ -5,7 +5,7 @@ import importModules from './utilities/importModules.js';
 import 'dotenv/config';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
-const GUILD_ID = process.env.TEST_SERVER_ID;
+const GUILD_ID = process.env.SERVER_ID;
 const CLIENT_ID = process.env.CLIENT_ID;
 const foldersPath = join(dirname(fileURLToPath(import.meta.url)), 'commands');
 
