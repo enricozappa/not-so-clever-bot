@@ -4,11 +4,15 @@ A playfully inadequate Discord bot built with Node.js and Discord.js.
 
 It simply reads from a JSON file to provide resources based on the received command.
 
-![](https://s12.gifyu.com/images/SZHaI.gif)
+![](https://firebasestorage.googleapis.com/v0/b/sot-videos.appspot.com/o/not-so-clever.gif?alt=media&token=f934fc88-1533-4746-ad7a-b4b0b2f20eb6)
 
 This simple idea was born during a company hackathon. My intention was to create a bot that would contain links to various sections of our company's documentation. By doing so, it could directly speed up the search for specific topics on Discord, avoiding the need to search manually.
 
 In this demo, the JSON file contains links to resources related to the popular video game "Sea Of Thieves."
+
+The example commands are:
+- `/list` followed by the subcommands `Guides` to get the SoT guides links or `Maps` to get the maps  
+- `/search` followed by a query word to search anything inside the json matching that word  
 
 ## Getting Started
 
