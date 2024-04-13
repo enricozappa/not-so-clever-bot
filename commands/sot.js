@@ -27,6 +27,7 @@ const data = new SlashCommandBuilder()
       .setDescription('Select a resource')
       .setRequired(true)
       .addChoices(
+        // TODO: generate command choices from json keys
         { name: 'Guides', value: 'SoT Guides' },
         { name: 'Maps', value: 'SoT Maps' }
       )
