@@ -1,21 +1,22 @@
 import { SlashCommandBuilder } from 'discord.js';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import fs from 'fs/promises';
 
-// TODO: move to an external JSON file
-const sotData = {
-  'SoT Guides': {
-    'Rare Thief Guide': 'https://rarethief.com/sea-of-thieves-guides',
-    'SoT Wiki': 'https://seaofthieves.fandom.com/wiki/Sea_of_Thieves_Wiki',
-  },
-  'SoT Maps': {
-    'SoT Companion Map': 'https://maps.seaofthieves.rarethief.com',
-    'Sea Of Thieves Map': 'https://www.seaofthievesmap.info',
-    'IGN SoT Map': 'https://www.ign.com/maps/sea-of-thieves/interactive',
-    "Merfolk's Lullaby":
-      'https://www.merfolkslullaby.com/map?latitude=18.63&longitude=-64.42&zoom=11&realm=sea-of-thieves',
-    'Steam Community All Island':
-      'https://steamcommunity.com/sharedfiles/filedetails/?id=2304041443',
-  },
-};
+async function getJSONdata() {
+  const currentDir = dirname(fileURLToPath(import.meta.url));
+  const projectRoot = join(currentDir, '..');
+
+  try {
+    const data = await fs.readFile(`${projectRoot}/data/sot.json`, 'utf-8');
+
+    return JSON.parse(data);
+  } catch (err) {
+    console.error('Error reading JSON:', err);
+  }
+}
+
+const sotData = await getJSONdata();
 
 const data = new SlashCommandBuilder()
   .setName('sot')
