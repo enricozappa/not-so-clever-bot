@@ -4,11 +4,12 @@ import { fileURLToPath } from 'node:url';
 import fs from 'fs/promises';
 
 async function getJSONdata() {
+  //TODO: make this as an importable utility function
   const currentDir = dirname(fileURLToPath(import.meta.url));
   const projectRoot = join(currentDir, '..');
 
   try {
-    const data = await fs.readFile(`${projectRoot}/data/sot.json`, 'utf-8');
+    const data = await fs.readFile(`${projectRoot}/data/data.json`, 'utf-8');
 
     return JSON.parse(data);
   } catch (err) {
@@ -16,10 +17,10 @@ async function getJSONdata() {
   }
 }
 
-const sotData = await getJSONdata();
+const resourcesData = await getJSONdata();
 
 const data = new SlashCommandBuilder()
-  .setName('sot')
+  .setName('list')
   .setDescription('Show resources for Sea Of Thieves')
   .addStringOption((option) =>
     option
@@ -37,8 +38,8 @@ async function execute(interaction) {
   const selectedResource = interaction.options.getString('resources');
 
   try {
-    if (selectedResource in sotData) {
-      const filteredObject = sotData[selectedResource];
+    if (selectedResource in resourcesData) {
+      const filteredObject = resourcesData[selectedResource];
 
       console.log(
         '\x1b[36m%s\x1b[0m',
