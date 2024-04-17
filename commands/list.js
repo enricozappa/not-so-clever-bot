@@ -43,7 +43,7 @@ async function execute(interaction) {
 
       console.log(
         '\x1b[36m%s\x1b[0m',
-        `${interaction.user.username} requested ${selectedResource}`
+        `${interaction.user.username} requested ${selectedResource} resource`
       );
 
       let response = `Here are the ${selectedResource}:\n`;

@@ -17,7 +17,7 @@ async function registerCommands() {
     // Set a new item in the Collection with the key as the command name and the value as the imported module
     if (command && command.data && command.execute) {
       client.commands.set(command.data.name, command);
-      console.log(`Added command => ${command.data.name}`);
+      console.log(`Command loaded => ${command.data.name}`);
     } else {
       console.error(
         `[WARNING] Command at ${filePath} is missing required properties.`
@@ -37,7 +37,7 @@ async function registerEvents() {
       } else {
         client.on(event.name, (...args) => event.execute(...args));
       }
-      console.log(`Added event => ${event.name}`);
+      console.log(`Event loaded => ${event.name}`);
     } else {
       console.error(
         `[WARNING] Event at ${filePath} is missing required properties.`
