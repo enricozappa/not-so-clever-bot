@@ -1,21 +1,22 @@
 import { SlashCommandBuilder } from 'discord.js';
 import getJSONdata from '../utilities/getJSONdata.js';
+import generateSubcommands from '../utilities/generateSubcommands.js';
 
 const resourcesData = await getJSONdata();
 
+// Generate command choices from json keys
+const choices = generateSubcommands(resourcesData);
+
+// Initialize command data
 const data = new SlashCommandBuilder()
   .setName('list')
-  .setDescription('Show resources for Sea Of Thieves')
+  .setDescription('Show resources by category')
   .addStringOption((option) =>
     option
       .setName('resources')
       .setDescription('Select a resource')
       .setRequired(true)
-      .addChoices(
-        // TODO: generate command choices from json keys
-        { name: 'Guides', value: 'SoT Guides' },
-        { name: 'Maps', value: 'SoT Maps' }
-      )
+      .addChoices(...choices)
   );
 
 async function execute(interaction) {
@@ -27,7 +28,7 @@ async function execute(interaction) {
 
       console.log(
         '\x1b[36m%s\x1b[0m',
-        `${interaction.user.username} requested ${selectedResource} resource`
+        `${interaction.user.username} requested ${selectedResource}`
       );
 
       let response = `Here are the ${selectedResource}:\n`;
