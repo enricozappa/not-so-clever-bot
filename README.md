@@ -1,8 +1,11 @@
 # not-so-clever-bot
 
-A playfully inadequate Discord bot built with Node.js and Discord.js.
+A playfully inadequate Discord bot built with:
 
-It simply reads from a JSON file to provide resources based on the received command.
+- [Node.js](https://nodejs.org) - Popular JavaScript runtime environment
+- [discord.js](https://discord.js.org/) - a Node.js module to build Discord bots through Discord API
+
+This bot simply reads from a JSON file to provide resources based on the received command.
 
 ![](https://firebasestorage.googleapis.com/v0/b/sot-videos.appspot.com/o/not-so-clever.gif?alt=media&token=f934fc88-1533-4746-ad7a-b4b0b2f20eb6)
 
